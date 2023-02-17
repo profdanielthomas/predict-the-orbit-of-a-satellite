@@ -1,0 +1,58 @@
+# Import necessary libraries
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the initial conditions of the satellite
+x0 = 7000 # initial x position (km)
+y0 = 0 # initial y position (km)
+vx0 = 0 # initial x velocity (km/s)
+vy0 = 7.5 # initial y velocity (km/s)
+t0 = 0 # initial time (s)
+
+# Define constants
+G = 6.67430e-11 # gravitational constant (m^3/kg/s^2)
+M = 5.97e24 # mass of the Earth (kg)
+R = 6378.137 # radius of the Earth (km)
+
+# Define the function to calculate the acceleration of the satellite
+def acceleration(x, y):
+    r = np.sqrt(x**2 + y**2)
+    a_x = -G*M*x/r**3
+    a_y = -G*M*y/r**3
+    return a_x, a_y
+
+# Define the time step and duration of the simulation
+dt = 1 # time step (s)
+t_end = 3600 # end time of the simulation (s)
+
+# Initialize arrays to store the position and velocity of the satellite at each time step
+x = np.zeros(int(t_end/dt) + 1)
+y = np.zeros(int(t_end/dt) + 1)
+vx = np.zeros(int(t_end/dt) + 1)
+vy = np.zeros(int(t_end/dt) + 1)
+t = np.zeros(int(t_end/dt) + 1)
+
+# Set the initial conditions of the satellite
+x[0] = x0
+y[0] = y0
+vx[0] = vx0
+vy[0] = vy0
+t[0] = t0
+
+# Perform numerical integration to simulate the motion of the satellite
+for i in range(1, int(t_end/dt) + 1):
+    a_x, a_y = acceleration(x[i-1], y[i-1])
+    vx[i] = vx[i-1] + a_x*dt
+    vy[i] = vy[i-1] + a_y*dt
+    x[i] = x[i-1] + vx[i]*dt
+    y[i] = y[i-1] + vy[i]*dt
+    t[i] = t[i-1] + dt
+
+# Plot the orbit of the satellite
+plt.plot(x, y)
+plt.plot(0, 0, 'o', markersize=10, color='black')
+plt.axis('equal')
+plt.xlabel('X (km)')
+plt.ylabel('Y (km)')
+plt.title('Orbit of Satellite')
+plt.show()
